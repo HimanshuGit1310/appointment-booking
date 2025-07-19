@@ -5,19 +5,16 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Entity
 @Data
-@RequiredArgsConstructor
-public class Appointment {
+public class Users {
 
-    //id, doctorSlotId, patientId, status
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int doctorSlotId;
-    private int patientId;
-    private boolean status;
+    private String username;
+    private String password;
+    private String role;
 }

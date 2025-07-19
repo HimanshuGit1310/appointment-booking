@@ -1,13 +1,15 @@
 package com.zeal.appointment_booking.service;
-
+import com.zeal.appointment_booking.dto.ApiResponse;
 import com.zeal.appointment_booking.model.Appointment;
+import com.zeal.appointment_booking.model.DoctorSlot;
 import com.zeal.appointment_booking.repo.AppointmentRepo;
+import com.zeal.appointment_booking.repo.DoctorSlotRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AppointmentService {
@@ -15,44 +17,65 @@ public class AppointmentService {
     @Autowired
     private AppointmentRepo appointmentRepo;
 
-    public ResponseEntity<List<Appointment>> allAppointment() {
-        List<Appointment> appointments = appointmentRepo.findAll();
-        return new ResponseEntity<>(appointments, HttpStatus.OK);
-    }
+    @Autowired
+    private DoctorSlotRepo doctorSlotRepo;
 
-    public ResponseEntity<Appointment> getAppointmentById(int id) {
-        Appointment appointment = appointmentRepo.findById(id).orElseThrow(() ->
-                new RuntimeException("Appointment Not found by this ID " + id));
-        return new ResponseEntity<>(appointment, HttpStatus.FOUND);
 
-    }
-
-    public ResponseEntity<Appointment> addAppointment(Appointment appointment) {
-        Appointment appointment1 = appointmentRepo.save(appointment);
-        return new ResponseEntity<>(appointment1, HttpStatus.CREATED);
-    }
-
-    public ResponseEntity<Appointment> updateAppointment(int id, Appointment updateData) {
-
-        Appointment existingApp = appointmentRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Appointment Not Found"));
-
-        existingApp.setId(updateData.getId());
-        existingApp.setDoctorSlotId(updateData.getDoctorSlotId());
-        existingApp.setPatientSlotId(updateData.getPatientSlotId());
-        existingApp.setStatus(updateData.isStatus());
-
-        Appointment updatedApp = appointmentRepo.save(existingApp);
-        return new ResponseEntity<>(updatedApp, HttpStatus.OK);
+    public ResponseEntity<ApiResponse<List<DoctorSlot>>> getAvailableSlot() {
+        List<DoctorSlot> availableSlots = doctorSlotRepo.findByAvailableTrue();
+        if (availableSlots.isEmpty())
+            return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse<>("No Available slot found",null));
+        else
+            return ResponseEntity.ok(new ApiResponse<>("Slots Found",availableSlots));
     }
 
 
-    public ResponseEntity<String> deleteAppointment(int id) {
-        if (!appointmentRepo.existsById(id))
-            return new ResponseEntity<>("Appointment Not Found With this ID "+ id,HttpStatus.NOT_FOUND);
-        else {
-            appointmentRepo.deleteById(id);
-            return new ResponseEntity<>("Deleted", HttpStatus.OK);
+
+    public ResponseEntity<ApiResponse<Appointment>> createAppointment(Appointment appointment) {
+
+        Optional<DoctorSlot> doctorSlot = doctorSlotRepo.findById(appointment.getDoctorSlotId());
+        if (doctorSlot.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("This slot not exists", null));
         }
+        DoctorSlot slot = doctorSlot.get();
+        if (!slot.getAvailable())
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>("Slot is already Booked",null));
+        slot.setAvailable(false);
+        doctorSlotRepo.save(slot);
+
+        Appointment newAppointment = new Appointment();
+        newAppointment.setDoctorSlotId(slot.getId());
+        newAppointment.setPatientId(appointment.getPatientId());
+        newAppointment.setStatus(true);
+
+        appointmentRepo.save(newAppointment);
+        return ResponseEntity.ok(new ApiResponse<>("Appointment Booked",newAppointment));
+    }
+
+
+    public ResponseEntity<ApiResponse<?>> deleteAppointment(int id) {
+      if (!appointmentRepo.existsById(id)) {
+          return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                  .body(new ApiResponse<>("Appointment not found with id " + id, null));
+      }
+      Appointment appointment = appointmentRepo.findById(id).get();
+      Optional<DoctorSlot> optionalSlot = doctorSlotRepo.findById(appointment.getDoctorSlotId());
+
+      if (optionalSlot.isPresent()){
+          DoctorSlot slot = optionalSlot.get();
+          slot.setAvailable(true);
+          doctorSlotRepo.save(slot);
+      }
+
+      appointmentRepo.deleteById(id);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApiResponse<>("Deleted Successfully",null));
     }
 }

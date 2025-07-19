@@ -8,16 +8,20 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-@Entity
+import java.util.Date;
+
+
 @Data
 @RequiredArgsConstructor
-public class Appointment {
+@Entity
 
-    //id, doctorSlotId, patientId, status
+public class DoctorSlot {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int doctorSlotId;
-    private int patientId;
-    private boolean status;
+    private int doctorId;
+    private String dateTime;
+    private Boolean available;
+
 }
