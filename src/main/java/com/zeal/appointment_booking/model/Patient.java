@@ -19,4 +19,5 @@ public class Patient {
     @JoinColumn(name = "user_id")
     private Users patients;
 
+
 }

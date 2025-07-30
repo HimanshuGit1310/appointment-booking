@@ -1,5 +1,6 @@
 package com.zeal.appointment_booking.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -17,5 +18,9 @@ public class Users {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToOne(mappedBy = "patients", cascade = CascadeType.ALL)
+    private Patient patient;
+
 
 }

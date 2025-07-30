@@ -1,6 +1,7 @@
 package com.zeal.appointment_booking.controller;
 
 import com.zeal.appointment_booking.dto.ApiResponse;
+import com.zeal.appointment_booking.dto.AppointmentRequestDto;
 import com.zeal.appointment_booking.model.Appointment;
 import com.zeal.appointment_booking.model.DoctorSlot;
 import com.zeal.appointment_booking.service.AppointmentService;
@@ -25,8 +26,8 @@ public class AppointmentController {
 
 
     @PostMapping("/booking")
-    public ResponseEntity<ApiResponse<Appointment>> createAppointment(@RequestBody Appointment appointment){
-        return appointmentService.createAppointment(appointment);
+    public ResponseEntity<ApiResponse<Appointment>> createAppointment(@RequestBody AppointmentRequestDto dto){
+        return appointmentService.createAppointment(dto);
     }
 //
 //    @DeleteMapping("/deleteBooking/{id}")
