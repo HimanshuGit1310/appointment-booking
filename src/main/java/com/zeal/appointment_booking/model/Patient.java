@@ -1,4 +1,4 @@
 package com.zeal.appointment_booking.model;
 
-public class Users {
+public class Patient {
 }
