@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("userAppointment")
+@RequestMapping("patient")
 public class AppointmentController {
 
     @Autowired
@@ -28,11 +28,17 @@ public class AppointmentController {
     public ResponseEntity<ApiResponse<Appointment>> createAppointment(@RequestBody Appointment appointment){
         return appointmentService.createAppointment(appointment);
     }
+//
+//    @DeleteMapping("/deleteBooking/{id}")
+//    public ResponseEntity<ApiResponse<?>> deleteAppointment(@PathVariable int id){
+//        return appointmentService.deleteAppointment(id);
+//    }
+//
+//    @GetMapping("/doctorSlot/{doctId}")
+//    public List<DoctorSlot> getSlotByDoctId(@PathVariable int doctId){
+//        return appointmentService.getSlotByDoctId(doctId);
+//    }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ApiResponse<?>> deleteAppointment(@PathVariable int id){
-        return appointmentService.deleteAppointment(id);
-    }
 
 
 }

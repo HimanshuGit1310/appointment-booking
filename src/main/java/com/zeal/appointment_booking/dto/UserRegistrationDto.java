@@ -1,11 +1,10 @@
-package com.zeal.appointment_booking.model;
+package com.zeal.appointment_booking.dto;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import com.zeal.appointment_booking.model.Role;
 import lombok.Data;
 
 @Data
-public class UserRegistrationDTO {
+public class UserRegistrationDto {
 
     private String username;
     private String password;
