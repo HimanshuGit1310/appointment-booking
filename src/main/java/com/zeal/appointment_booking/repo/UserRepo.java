@@ -10,4 +10,6 @@ import java.util.List;
 public interface UserRepo extends JpaRepository<Users,Integer> {
 
     boolean existsByUsername(String username);
+
+    Users findByUsername(String username);
 }

@@ -4,6 +4,7 @@ import com.zeal.appointment_booking.dto.ApiResponse;
 import com.zeal.appointment_booking.dto.DoctorSlotRequestDto;
 import com.zeal.appointment_booking.model.DoctorSlot;
 import com.zeal.appointment_booking.service.DoctorSlotService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,7 @@ public class DoctorSlotController {
     public ResponseEntity<String> deleteSlot(@PathVariable int id){
         return doctorSlotService.deleteSlot(id);
     }
+
 
 
 
