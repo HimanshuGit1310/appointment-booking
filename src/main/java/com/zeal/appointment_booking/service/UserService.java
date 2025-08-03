@@ -9,6 +9,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,6 +21,10 @@ public class UserService {
     @Autowired
     private EntityManager entityManager;
 
+    @Autowired
+    private BCryptPasswordEncoder encoder ;
+
+
     @Transactional
     public ResponseEntity<ApiResponse<Users>> register(UserRegistrationDto dto) {
         if (userRepo.existsByUsername(dto.getUsername())){
@@ -28,7 +33,7 @@ public class UserService {
         }
         Users newUser = new Users();
         newUser.setUsername(dto.getUsername());
-        newUser.setPassword(dto.getPassword());
+        newUser.setPassword(encoder.encode(dto.getPassword()));
         newUser.setRole(dto.getRole());
         Users savedUser = userRepo.save(newUser);
 
