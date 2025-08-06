@@ -19,7 +19,6 @@ public class MyUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Users user = userRepo.findByUsername(username);
         if (user == null){
-            System.out.println("User 404");
             throw new UsernameNotFoundException("User Not Found");
         }
 

@@ -3,10 +3,14 @@ package com.zeal.appointment_booking.controller;
 import com.zeal.appointment_booking.dto.ApiResponse;
 import com.zeal.appointment_booking.dto.UserRegistrationDto;
 import com.zeal.appointment_booking.model.Users;
+import com.zeal.appointment_booking.service.JwtService;
 import com.zeal.appointment_booking.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,30 +22,14 @@ public class UserController {
     private UserService userService;
 
 
-
-
-
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Users>> register(@RequestBody UserRegistrationDto dto){
         return userService.register(dto);
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody Users user){
-        return userService.login(user);
+    public String verify(@RequestBody UserRegistrationDto dto){
+        return userService.verify(dto);
     }
-
-//    @GetMapping("/contact")
-//    public String contact(HttpServletRequest request){
-//        return "This is Session Id " + request.getSession().getId();
-//    }
-//
-//    @GetMapping("/about")
-//    public String about(HttpServletRequest request){
-//        return "This is Session Id " + request.getSession().getId();
-//    }
-
-
-
 
 }

@@ -9,6 +9,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +26,12 @@ public class UserService {
 
     @Autowired
     private BCryptPasswordEncoder encoder ;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtService jwtService;
 
 
     @Transactional
@@ -56,7 +65,12 @@ public class UserService {
         return ResponseEntity.ok(response);
     }
 
-    public String login(Users user) {
-        return "Success";
+    public String verify(UserRegistrationDto dto) {
+        Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(dto.getUsername(),dto.getPassword()));
+        if (authentication.isAuthenticated()){
+            return jwtService.generateToken(dto.getUsername());
+        }
+        return "Login Failed";
     }
 }
